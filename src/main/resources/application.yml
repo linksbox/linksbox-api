@@ -1,3 +1,6 @@
+server:
+  port : 8081
+
 spring:
   application:
     name: linksbox
@@ -16,30 +19,44 @@ spring:
 #      maximum-pool-size: 4  
 #    url: "jdbc:postgresql://localhost:5432/postgres?ApplicationName=${spring.application.name}&currentSchema=${info.database.schema-name}"
 #    username: postgres
-#    password: habib  
+#    password: habib 
+    
+#  datasource:
+#    hikari:
+#      maximum-pool-size: 4  
+#    url: "jdbc:postgresql://ruby.db.elephantsql.com:5432/nuitqmxg?user=nuitqmxg&password=Qx47vcI1kx3ztodoLphsEmLFjI5xLQ93&sslmode=require"
+#    username: nuitqmxg
+#    password: Qx47vcI1kx3ztodoLphsEmLFjI5xLQ93  
 
   datasource:
-    url: jdbc:h2:mem:linksbox
-    driverClassName: org.h2.Driver
+    hikari:
+      maximum-pool-size: 4  
+    url: "jdbc:postgresql://ec2-54-88-130-244.compute-1.amazonaws.com:5432/d9ips34rfq0l29?user=oefojnaltmbifo&password=cfde16a87a22cf6abfc50c1e9931e567f2f153c6d920b30358fbd28e160cdfd2"
+    username: oefojnaltmbifo
+    password: cfde16a87a22cf6abfc50c1e9931e567f2f153c6d920b30358fbd28e160cdfd2
+    
+#  datasource:
+#    url: jdbc:h2:mem:linksbox
+#    driverClassName: org.h2.Driver
 
    
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+#  jpa:
+#    database-platform: org.hibernate.dialect.H2Dialect
      
-#  jpa: 
-#    hibernate:
-#      ddl-auto: update # When you launch the application for the first time - switch "none" at "create"
-#    show-sql: true
-#    database: postgresql
-#    database-platform: org.hibernate.dialect.PostgreSQLDialect
-#    generate-ddl: true
-#    open-in-view: false
-#    properties:
+  jpa: 
+    hibernate:
+      ddl-auto: update # When you launch the application for the first time - switch "none" at "create"
+    show-sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: true
+    open-in-view: false
+    properties:
 #      hibernate:
-#        default_schema: ${info.database.schema-name}
-#        jdbc:
-#          lob:
-#            non_contextual_creation: true 
+#        default_schema: nuitqmxg
+        jdbc:
+          lob:
+            non_contextual_creation: true 
 
 info:
   database:
