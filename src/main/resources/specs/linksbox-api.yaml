@@ -1,0 +1,239 @@
+openapi: 3.0.1
+info:
+  title: LinksBox API
+  version: '1.0'
+servers:
+  - url: 'http://localhost:8080/api/v1'
+  
+
+paths:
+  /links:  
+    get:
+      summary: Get list of all links
+      operationId: getLinks  
+      tags:
+        - Links
+      parameters:
+      - name: tagUuids
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string 
+            format: uuid 
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LinkData'
+      
+    post:
+      summary: Create new Link
+      operationId: createLink
+      tags:
+        - Links 
+      parameters:
+      - name: tagUuids
+        in: query
+        required: true
+        schema:
+          type: array
+          items:
+            type: string 
+            format: uuid        
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkInput'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkData'
+
+  /links/{uuid}:
+    parameters:
+      - name: uuid
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          
+    get:
+      summary: Get link by given uuid
+      operationId: getLinkByUuid
+      tags:
+        - Links
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkData'
+   
+    put:
+      summary: Update a link
+      operationId: updateLink
+      tags:
+        - Links
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkInput'  
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkData'
+      
+    delete:
+      summary: Delete link by given uuid
+      operationId: deleteLink
+      tags:
+        - Links
+      responses:
+        '200':
+          description: OK
+
+  /tags:
+    get:
+      summary: Get list of all tags
+      operationId: getTags  
+      tags:
+        - Tags
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TagData'
+      
+    post:
+      summary: Create new Tag
+      operationId: createTag
+      tags:
+        - Tags      
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagInput'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagData'
+
+  /tags/{uuid}:
+    parameters:
+      - name: uuid
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          
+    get:
+      summary: Get tag by given uuid
+      operationId: getTagByUuid
+      tags:
+        - Tags
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagData'
+      
+    put:
+      summary: Update a tag
+      operationId: updateTag
+      tags:
+        - Tags
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagInput'  
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagData'
+      
+    delete:
+      summary: Delete tag by given uuid
+      operationId: deleteTag
+      tags:
+        - Tags
+      responses:
+        '200':
+          description: OK
+          
+#################### COMPONENTS                
+components:
+  schemas:
+  
+    LinkData:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/LinkInput'
+        - properties:
+            uuid:
+              type: string
+              format: uuid
+            tags:
+              type: array
+              items:
+                $ref: '#/components/schemas/TagData'  
+          
+    LinkInput:
+      type: object
+      required:
+        - url
+      properties:
+        title:
+          type: string
+        url:
+          type: string
+        notes:
+          type: string 
+
+    TagData:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        name:
+          type: string  
+        
+    TagInput:
+      type: object
+      required:
+        - url
+      properties:
+        name:
+          type: string
+      
