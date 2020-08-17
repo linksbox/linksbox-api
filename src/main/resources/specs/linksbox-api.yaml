@@ -232,7 +232,7 @@ components:
     TagInput:
       type: object
       required:
-        - url
+        - name
       properties:
         name:
           type: string
