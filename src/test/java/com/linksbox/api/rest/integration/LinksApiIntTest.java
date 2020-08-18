@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +23,7 @@ import com.linksbox.api.rest.model.LinkData;
 import com.linksbox.api.rest.model.LinkInput;
 import com.linksbox.model.Tag;
 
+@Disabled
 @SpringBootTest(classes = LinksboxApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 class LinksApiIntTest extends AbstractTestBase {
 

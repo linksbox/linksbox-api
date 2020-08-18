@@ -1,6 +1,7 @@
 package com.linksbox.api.rest.integration;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,8 +16,9 @@ import com.linksbox.AbstractTestBase;
 import com.linksbox.LinksboxApplication;
 import com.linksbox.model.Tag;
 
+@Disabled
 @SpringBootTest(classes = LinksboxApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
-class TagsApiIntTest extends AbstractTestBase{
+class TagsApiIntTest extends AbstractTestBase {
 
 	private final static String PREFIX_TAGS_API_URL = "/api/v1/tags";
 
@@ -69,7 +71,7 @@ class TagsApiIntTest extends AbstractTestBase{
 	void deleteTag_returnOk() {
 		Tag createdTag = restTemplate.postForEntity(PREFIX_TAGS_API_URL, createDummyTag(), Tag.class).getBody();
 		restTemplate.delete(PREFIX_TAGS_API_URL + "/" + createdTag.getUuid());
-		
+
 		ResponseEntity<Tag> response = restTemplate.getForEntity(PREFIX_TAGS_API_URL + "/" + createdTag.getUuid(),
 				Tag.class);
 		Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
