@@ -3,9 +3,11 @@ info:
   title: LinksBox API
   version: '1.0'
 servers:
-  - url: 'https://linksbox-api.herokuapp.com:8081/api/v1'
+  - url: 'https://linksbox-api.herokuapp.com/api/v1'
+    description: dev
+  - url: 'http://localhost:8081/api/v1'
+    description: local  
   
-
 paths:
   /links:  
     get:
