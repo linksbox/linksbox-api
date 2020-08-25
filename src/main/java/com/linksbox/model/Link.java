@@ -14,6 +14,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
@@ -27,7 +28,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "LINK")
+@Table(name = "LINK", uniqueConstraints={@UniqueConstraint(columnNames={"url"})})
 public class Link extends AbstractBaseEntity {
 
 	private static final long serialVersionUID = 1L;

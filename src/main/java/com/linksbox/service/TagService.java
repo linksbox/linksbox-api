@@ -16,6 +16,8 @@ public interface TagService {
 	List<Tag> getTags();
 
 	Optional<Tag> getTagByUuid(UUID uuid);
+	
+	Optional<Tag> getTagByName(String name);
 
 	Tag createOrUpdateTag(Tag tag);
 

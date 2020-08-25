@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import com.linksbox.api.rest.mapper.TagMapper;
 import com.linksbox.api.rest.model.TagData;
 import com.linksbox.api.rest.model.TagInput;
+import com.linksbox.exception.ErrorKey;
+import com.linksbox.exception.RestApiValidationException;
 import com.linksbox.model.Tag;
 import com.linksbox.service.TagService;
 
@@ -48,8 +50,12 @@ public class TagsApiDelegateImpl implements TagsApiDelegate {
 
 	@Override
 	public ResponseEntity<TagData> createTag(TagInput tagInput) {
-		log.info("> createTag...");
+		
+		if (tagService.getTagByName(tagInput.getName()).isPresent()) {
+			throw new RestApiValidationException(ErrorKey.TAG_NAME, "Tag already exist!");
+		}
 
+		log.info("> createTag...");
 		TagData response = new TagData();
 		try {
 			Tag tag = mapper.mapToEntity(tagInput);

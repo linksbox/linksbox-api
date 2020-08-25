@@ -143,6 +143,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TagData'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorList'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorList"        
 
   /tags/{uuid}:
     parameters:
@@ -239,3 +251,14 @@ components:
         name:
           type: string
       
+    ApiError:
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          
+    ApiErrorList:
+      type: array
+      items:
+        $ref: '#/components/schemas/ApiError'     

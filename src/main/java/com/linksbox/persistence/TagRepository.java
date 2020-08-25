@@ -17,4 +17,6 @@ import com.linksbox.model.Tag;
 public interface TagRepository extends JpaRepository<Tag, Long> {
 	
 	Optional<Tag> findByUuid(UUID uuid);
+	
+	Optional<Tag> findByName(String name);
 }

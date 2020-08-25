@@ -37,4 +37,9 @@ public class TagServiceImpl implements TagService {
 		repo.delete(tag);
 	}
 
+	@Override
+	public Optional<Tag> getTagByName(String name) {
+		return repo.findByName(name);
+	}
+
 }
