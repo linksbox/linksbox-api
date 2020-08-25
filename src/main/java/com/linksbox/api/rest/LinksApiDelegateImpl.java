@@ -20,6 +20,9 @@ import com.linksbox.api.rest.mapper.LinkMapper;
 import com.linksbox.api.rest.mapper.TagMapper;
 import com.linksbox.api.rest.model.LinkData;
 import com.linksbox.api.rest.model.LinkInput;
+import com.linksbox.exception.ErrorKey;
+import com.linksbox.exception.RestApiServerException;
+import com.linksbox.exception.RestApiValidationException;
 import com.linksbox.model.Link;
 import com.linksbox.model.Tag;
 import com.linksbox.service.LinkService;
@@ -63,7 +66,7 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 
 		Optional<Link> link = linkService.getLinkByUuid(uuid);
 		if (!link.isPresent()) {
-			throw new IllegalArgumentException("Link Not found");
+			throw new RestApiValidationException(ErrorKey.LINK_URL, "Link Not found");
 		}
 		return ResponseEntity.ok().body(mapper.mapToRestAPI(link.get()));
 	}
@@ -72,8 +75,13 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 	public ResponseEntity<LinkData> createLink(List<UUID> tagUuids, LinkInput linkInput) {
 
 		if (CollectionUtils.isEmpty(tagUuids)) {
-			throw new IllegalArgumentException("Tags are mondatory for the link creation!");
+			throw new RestApiValidationException("Tags are mondatory for the link creation!");
 		}
+		
+		if (linkService.getLinkByUrl(linkInput.getUrl()).isPresent()) {
+			throw new RestApiValidationException(ErrorKey.LINK_URL, "Link URL already exist!");
+		}
+		
 		log.info("> createLink...");
 
 		LinkData response = new LinkData();
@@ -84,6 +92,7 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 			response = mapper.mapToRestAPI(link);
 		} catch (Exception e) {
 			log.error("Exception in link creation: {}", e);
+			throw new RestApiServerException(e.getMessage());
 		}
 		return ResponseEntity.ok().body(response);
 	}
@@ -93,7 +102,7 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 
 		Optional<Link> link = linkService.getLinkByUuid(uuid);
 		if (!link.isPresent()) {
-			throw new IllegalArgumentException("Link Not found");
+			throw new RestApiValidationException(ErrorKey.LINK_URL, "Link Not found");
 		}
 		LinkData response = new LinkData();
 		try {
@@ -102,6 +111,7 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 			response = mapper.mapToRestAPI(linkUp);
 		} catch (Exception e) {
 			log.error("Exception in link updating: {}", e);
+			throw new RestApiServerException(e.getMessage());
 		}
 		return ResponseEntity.ok().body(response);
 	}
@@ -111,12 +121,13 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 
 		Optional<Link> link = linkService.getLinkByUuid(uuid);
 		if (!link.isPresent()) {
-			throw new IllegalArgumentException("Link Not found");
+			throw new RestApiValidationException(ErrorKey.LINK_URL, "Link Not found");
 		}
 		try {
 			linkService.deleteLink(link.get());
 		} catch (Exception e) {
 			log.error("Exception in link deleting: {}", e);
+			throw new RestApiServerException(e.getMessage());
 		}
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

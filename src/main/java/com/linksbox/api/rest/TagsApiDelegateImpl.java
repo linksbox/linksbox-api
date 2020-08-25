@@ -16,6 +16,7 @@ import com.linksbox.api.rest.mapper.TagMapper;
 import com.linksbox.api.rest.model.TagData;
 import com.linksbox.api.rest.model.TagInput;
 import com.linksbox.exception.ErrorKey;
+import com.linksbox.exception.RestApiServerException;
 import com.linksbox.exception.RestApiValidationException;
 import com.linksbox.model.Tag;
 import com.linksbox.service.TagService;
@@ -43,7 +44,7 @@ public class TagsApiDelegateImpl implements TagsApiDelegate {
 	public ResponseEntity<TagData> getTagByUuid(UUID uuid) {
 		Optional<Tag> tag = tagService.getTagByUuid(uuid);
 		if (!tag.isPresent()) {
-			throw new IllegalArgumentException("Tag Not found");
+			throw new RestApiValidationException("Tag Not found");
 		}
 		return ResponseEntity.ok().body(mapper.mapToRestAPI(tag.get()));
 	}
@@ -63,6 +64,7 @@ public class TagsApiDelegateImpl implements TagsApiDelegate {
 			response = mapper.mapToRestAPI(tag);
 		} catch (Exception e) {
 			log.error("Exception in Tag creation: {}", e);
+			throw new RestApiServerException(e.getMessage());
 		}
 		return ResponseEntity.ok().body(response);
 	}
@@ -71,7 +73,7 @@ public class TagsApiDelegateImpl implements TagsApiDelegate {
 	public ResponseEntity<TagData> updateTag(UUID uuid, TagInput tagInput) {
 		Optional<Tag> tag = tagService.getTagByUuid(uuid);
 		if (!tag.isPresent()) {
-			throw new IllegalArgumentException("Tag Not found");
+			throw new RestApiValidationException("Tag Not found");
 		}
 		TagData response = new TagData();
 		try {
@@ -80,6 +82,7 @@ public class TagsApiDelegateImpl implements TagsApiDelegate {
 			response = mapper.mapToRestAPI(tagUp);
 		} catch (Exception e) {
 			log.error("Exception in Tag creation: {}", e);
+			throw new RestApiServerException(e.getMessage());
 		}
 		return ResponseEntity.ok().body(response);
 	}
@@ -88,12 +91,13 @@ public class TagsApiDelegateImpl implements TagsApiDelegate {
 	public ResponseEntity<Void> deleteTag(UUID uuid) {
 		Optional<Tag> tag = tagService.getTagByUuid(uuid);
 		if (!tag.isPresent()) {
-			throw new IllegalArgumentException("Tag Not found");
+			throw new RestApiValidationException("Tag Not found");
 		}
 		try {
 			tagService.deleteTag(tag.get());
 		} catch (Exception e) {
 			log.error("Exception in Tag creation: {}", e);
+			throw new RestApiServerException(e.getMessage());
 		}
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

@@ -19,6 +19,8 @@ public interface LinkService {
 	List<Link> getLinksByTags(List<Tag> tags);
 
 	Optional<Link> getLinkByUuid(UUID uuid);
+	
+	Optional<Link> getLinkByUrl(String url);
 
 	Link createOrUpdateLink(Link link);
 	
