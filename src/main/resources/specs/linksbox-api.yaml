@@ -33,7 +33,19 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/LinkData'
-      
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorList'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorList"   
+                     
     post:
       summary: Create new Link
       operationId: createLink
@@ -60,7 +72,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LinkData'
-
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorList'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorList"   
+                
   /links/{uuid}:
     parameters:
       - name: uuid
@@ -82,7 +106,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LinkData'
-   
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorList'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorList"   
+                   
     put:
       summary: Update a link
       operationId: updateLink
@@ -100,7 +136,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LinkData'
-      
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorList'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorList"   
+                      
     delete:
       summary: Delete link by given uuid
       operationId: deleteLink
@@ -109,7 +157,19 @@ paths:
       responses:
         '200':
           description: OK
-
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorList'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorList"   
+                
   /tags:
     get:
       summary: Get list of all tags
@@ -177,6 +237,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TagData'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorList'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorList"                   
       
     put:
       summary: Update a tag
@@ -195,7 +267,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TagData'
-      
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorList'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorList"   
+                      
     delete:
       summary: Delete tag by given uuid
       operationId: deleteTag
@@ -204,7 +288,19 @@ paths:
       responses:
         '200':
           description: OK
-          
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorList'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorList"   
+                          
 #################### COMPONENTS                
 components:
   schemas:

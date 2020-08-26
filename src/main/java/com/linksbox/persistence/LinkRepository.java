@@ -21,4 +21,6 @@ public interface LinkRepository extends JpaRepository<Link, Long> {
 	Optional<Link> findByUuid(UUID uuid);
 
 	List<Link> findByTagsIn(List<Tag> tags);
+	
+	Optional<Link> findByUrl(String url);
 }

@@ -43,4 +43,9 @@ public class LinkServiceImpl implements LinkService {
 		return repo.findByTagsIn(tags);
 	}
 
+	@Override
+	public Optional<Link> getLinkByUrl(String url) {
+		return repo.findByUrl(url);
+	}
+
 }
