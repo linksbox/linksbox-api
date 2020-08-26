@@ -16,6 +16,8 @@ public interface LinkService {
 
 	List<Link> getLinks();
 	
+	List<Link> search(String searchText);
+	
 	List<Link> getLinksByTags(List<Tag> tags);
 
 	Optional<Link> getLinkByUuid(UUID uuid);

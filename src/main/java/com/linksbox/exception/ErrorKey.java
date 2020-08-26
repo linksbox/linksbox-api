@@ -13,5 +13,6 @@ public enum ErrorKey {
 	NONE,
 	TAG_NAME,
 	LINK_URL,
+	SEARCH_TEXT,
 	UNKNOWN_UUID
 }
