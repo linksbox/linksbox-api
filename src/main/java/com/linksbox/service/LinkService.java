@@ -24,5 +24,7 @@ public interface LinkService {
 
 	Link createOrUpdateLink(Link link);
 	
+	// test for Imed
+	
 	void deleteLink(Link link);
 }
