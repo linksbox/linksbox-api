@@ -169,7 +169,42 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiErrorList"   
-                
+
+  /links/search/{searchText}:
+    parameters:
+      - name: searchText
+        in: path
+        required: true
+        schema:
+          type: string
+          
+    get:
+      summary: Get link by given free text
+      operationId: search
+      tags:
+        - Links
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LinkData'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorList'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorList"
+                                
   /tags:
     get:
       summary: Get list of all tags

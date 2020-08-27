@@ -45,6 +45,16 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 	TagMapper tagMapper = new TagMapper();
 
 	@Override
+	public ResponseEntity<List<LinkData>> search(String searchText) {
+
+		if (searchText == null || searchText.trim().isEmpty()) {
+			throw new RestApiValidationException(ErrorKey.SEARCH_TEXT, "Enter a free text to search link...");
+		}
+		return ResponseEntity.ok().body(linkService.search(searchText).stream().map(link -> mapper.mapToRestAPI(link))
+				.collect(Collectors.toList()));
+	}
+
+	@Override
 	public ResponseEntity<List<LinkData>> getLinks(List<UUID> tagUuids) {
 
 		Set<LinkData> result = new HashSet<>();
@@ -77,11 +87,11 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 		if (CollectionUtils.isEmpty(tagUuids)) {
 			throw new RestApiValidationException("Tags are mondatory for the link creation!");
 		}
-		
+
 		if (linkService.getLinkByUrl(linkInput.getUrl()).isPresent()) {
 			throw new RestApiValidationException(ErrorKey.LINK_URL, "Link URL already exist!");
 		}
-		
+
 		log.info("> createLink...");
 
 		LinkData response = new LinkData();
