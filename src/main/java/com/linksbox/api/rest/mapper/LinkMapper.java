@@ -1,10 +1,14 @@
 package com.linksbox.api.rest.mapper;
 
+import java.util.stream.Collectors;
+
 import com.linksbox.api.rest.model.LinkData;
 import com.linksbox.api.rest.model.LinkInput;
 import com.linksbox.model.Link;
 
 public class LinkMapper {
+
+	TagMapper tagMapper = new TagMapper();
 
 	public LinkData mapToRestAPI(Link entity) {
 
@@ -15,6 +19,8 @@ public class LinkMapper {
 			result.setTitle(entity.getTitle());
 			result.setUrl(entity.getUrl());
 			result.setNotes(entity.getNotes());
+			result.setTags(
+					entity.getTags().stream().map(Tag -> tagMapper.mapToRestAPI(Tag)).collect(Collectors.toList()));
 		}
 		return result;
 	}
