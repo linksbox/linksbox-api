@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -50,12 +51,12 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 		if (searchText == null || searchText.trim().isEmpty()) {
 			throw new RestApiValidationException(ErrorKey.SEARCH_TEXT, "Enter a free text to search link...");
 		}
-		return ResponseEntity.ok().body(linkService.search(searchText).stream().map(link -> mapper.mapToRestAPI(link))
-				.collect(Collectors.toList()));
+		return ResponseEntity.ok().body(linkService.search(searchText, PageRequest.of(1, 5)).getContent().stream()
+				.map(link -> mapper.mapToRestAPI(link)).collect(Collectors.toList()));
 	}
 
 	@Override
-	public ResponseEntity<List<LinkData>> getLinks(List<UUID> tagUuids) {
+	public ResponseEntity<List<LinkData>> getLinks(Integer pageNumber, Integer pageSize, List<UUID> tagUuids) {
 
 		Set<LinkData> result = new HashSet<>();
 
@@ -66,7 +67,8 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 				result.addAll(links);
 			}
 		} else {
-			result = linkService.getLinks().stream().map(link -> mapper.mapToRestAPI(link)).collect(Collectors.toSet());
+			result = linkService.getLinks(PageRequest.of(pageNumber, pageSize)).getContent().stream()
+					.map(link -> mapper.mapToRestAPI(link)).collect(Collectors.toSet());
 		}
 		return ResponseEntity.ok().body(new ArrayList<>(result));
 	}

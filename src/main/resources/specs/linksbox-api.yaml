@@ -24,6 +24,16 @@ paths:
           items:
             type: string 
             format: uuid 
+      - name: pageNumber
+        in: query
+        required: true
+        schema:
+          type: integer
+      - name: pageSize
+        in: query
+        required: true
+        schema:
+          type: integer   
       responses:
         '200':
           description: OK

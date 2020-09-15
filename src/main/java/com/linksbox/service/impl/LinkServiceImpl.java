@@ -11,6 +11,8 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -27,13 +29,13 @@ public class LinkServiceImpl implements LinkService {
 	LinkRepository repo;
 
 	@Override
-	public List<Link> search(String searchText) {
-		return repo.findAll(SearchSpecificaton.findByFreeText(searchText));
+	public Page<Link> search(String searchText, Pageable pageable) {
+		return repo.findAll(SearchSpecificaton.findByFreeText(searchText), pageable);
 	}
 
 	@Override
-	public List<Link> getLinks() {
-		return repo.findAll();
+	public Page<Link> getLinks(Pageable pageable) {
+		return repo.findAll(pageable);
 	}
 
 	@Override
