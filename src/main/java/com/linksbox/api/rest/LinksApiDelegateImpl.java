@@ -1,17 +1,16 @@
 package com.linksbox.api.rest;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,6 +20,7 @@ import com.linksbox.api.rest.mapper.LinkMapper;
 import com.linksbox.api.rest.mapper.TagMapper;
 import com.linksbox.api.rest.model.LinkData;
 import com.linksbox.api.rest.model.LinkInput;
+import com.linksbox.api.rest.model.LinksData;
 import com.linksbox.exception.ErrorKey;
 import com.linksbox.exception.RestApiServerException;
 import com.linksbox.exception.RestApiValidationException;
@@ -46,31 +46,46 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 	TagMapper tagMapper = new TagMapper();
 
 	@Override
-	public ResponseEntity<List<LinkData>> search(String searchText) {
+	public ResponseEntity<LinksData> search(String searchText, Integer page, Integer size) {
 
 		if (searchText == null || searchText.trim().isEmpty()) {
 			throw new RestApiValidationException(ErrorKey.SEARCH_TEXT, "Enter a free text to search link...");
 		}
-		return ResponseEntity.ok().body(linkService.search(searchText, PageRequest.of(1, 5)).getContent().stream()
-				.map(link -> mapper.mapToRestAPI(link)).collect(Collectors.toList()));
+
+		LinksData result = new LinksData();
+
+		Page<Link> linkPage = linkService.search(searchText, PageRequest.of(page, size, Sort.by("title").ascending()));
+		List<LinkData> links = linkPage.getContent().stream().map(link -> mapper.mapToRestAPI(link))
+				.collect(Collectors.toList());
+		result.setLinks(links);
+		result.setCurrentPage(linkPage.getNumber());
+		result.setTotalElements((int) linkPage.getTotalElements());
+		result.setTotalPages(linkPage.getTotalPages());
+
+		return ResponseEntity.ok().body(result);
 	}
 
 	@Override
-	public ResponseEntity<List<LinkData>> getLinks(Integer pageNumber, Integer pageSize, List<UUID> tagUuids) {
+	public ResponseEntity<LinksData> getLinks(List<UUID> tagUuids, Integer page, Integer size) {
 
-		Set<LinkData> result = new HashSet<>();
+		LinksData result = new LinksData();
+		List<LinkData> links = null;
 
 		if (!CollectionUtils.isEmpty(tagUuids)) {
 			for (UUID uuid : tagUuids) {
-				List<LinkData> links = tagService.getTagByUuid(uuid).get().getLinks().stream()
-						.map(link -> mapper.mapToRestAPI(link)).collect(Collectors.toList());
-				result.addAll(links);
+				links = tagService.getTagByUuid(uuid).get().getLinks().stream().map(link -> mapper.mapToRestAPI(link))
+						.collect(Collectors.toList());
+				result.setLinks(links);
 			}
 		} else {
-			result = linkService.getLinks(PageRequest.of(pageNumber, pageSize)).getContent().stream()
-					.map(link -> mapper.mapToRestAPI(link)).collect(Collectors.toSet());
+			Page<Link> linkPage = linkService.getLinks(PageRequest.of(page, size, Sort.by("title").ascending()));
+			links = linkPage.getContent().stream().map(link -> mapper.mapToRestAPI(link)).collect(Collectors.toList());
+			result.setLinks(links);
+			result.setCurrentPage(linkPage.getNumber());
+			result.setTotalElements((int) linkPage.getTotalElements());
+			result.setTotalPages(linkPage.getTotalPages());
 		}
-		return ResponseEntity.ok().body(new ArrayList<>(result));
+		return ResponseEntity.ok().body(result);
 	}
 
 	@Override
