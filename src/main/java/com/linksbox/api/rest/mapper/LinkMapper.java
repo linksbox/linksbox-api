@@ -19,6 +19,7 @@ public class LinkMapper {
 			result.setTitle(entity.getTitle());
 			result.setUrl(entity.getUrl());
 			result.setNotes(entity.getNotes());
+			result.setViews(entity.getViews());
 			result.setTags(
 					entity.getTags().stream().map(Tag -> tagMapper.mapToRestAPI(Tag)).collect(Collectors.toList()));
 		}
@@ -33,6 +34,7 @@ public class LinkMapper {
 			result.setTitle(input.getTitle());
 			result.setUrl(input.getUrl());
 			result.setNotes(input.getNotes());
+			result.setViews(input.getViews());
 		}
 		return result;
 	}
@@ -44,6 +46,7 @@ public class LinkMapper {
 			result.setTitle(input.getTitle());
 			result.setUrl(input.getUrl());
 			result.setNotes(input.getNotes());
+			result.setViews(input.getViews());
 		}
 		return result;
 	}

@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.linksbox.model.Link;
 import com.linksbox.model.Tag;
 
@@ -14,9 +17,9 @@ import com.linksbox.model.Tag;
 
 public interface LinkService {
 
-	List<Link> getLinks();
+	Page<Link> getLinks(Pageable pageable);
 	
-	List<Link> search(String searchText);
+	Page<Link> search(String searchText, Pageable pageable);
 	
 	List<Link> getLinksByTags(List<Tag> tags);
 
