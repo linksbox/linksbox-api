@@ -54,7 +54,7 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 
 		LinksData result = new LinksData();
 
-		Page<Link> linkPage = linkService.search(searchText, PageRequest.of(page, size, Sort.by("title").ascending()));
+		Page<Link> linkPage = linkService.search(searchText, PageRequest.of(page, size, Sort.by("views").descending()));
 		List<LinkData> links = linkPage.getContent().stream().map(link -> mapper.mapToRestAPI(link))
 				.collect(Collectors.toList());
 		result.setLinks(links);

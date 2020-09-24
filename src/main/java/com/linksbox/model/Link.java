@@ -51,6 +51,9 @@ public class Link extends AbstractBaseEntity {
 	@Column(name = "NOTES")
 	private String notes;
 	
+	@Column(name = "VIEWS")
+	private Integer views;
+	
 	@ManyToMany
 	@JoinTable(
 	  name = "LINK_TAG",

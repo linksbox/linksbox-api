@@ -403,6 +403,8 @@ components:
           type: string
         notes:
           type: string 
+        views:
+          type: integer   
 
     TagData:
       type: object
