@@ -61,6 +61,7 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 		result.setCurrentPage(linkPage.getNumber());
 		result.setTotalElements((int) linkPage.getTotalElements());
 		result.setTotalPages(linkPage.getTotalPages());
+		incrementViews(linkPage.getContent());
 
 		return ResponseEntity.ok().body(result);
 	}
@@ -78,7 +79,7 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 				result.setLinks(links);
 			}
 		} else {
-			Page<Link> linkPage = linkService.getLinks(PageRequest.of(page, size, Sort.by("title").ascending()));
+			Page<Link> linkPage = linkService.getLinks(PageRequest.of(page, size, Sort.by("views").descending()));
 			links = linkPage.getContent().stream().map(link -> mapper.mapToRestAPI(link)).collect(Collectors.toList());
 			result.setLinks(links);
 			result.setCurrentPage(linkPage.getNumber());
@@ -163,5 +164,15 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 
 	private List<Tag> getTags(List<UUID> tagUuids) {
 		return tagUuids.stream().map(uuid -> tagService.getTagByUuid(uuid).get()).collect(Collectors.toList());
+	}
+
+	private void incrementViews(List<Link> links) {
+		links.stream().forEach(link -> {
+			if(link.getViews() == null) {
+				link.setViews(0);
+			}
+			link.setViews(link.getViews() + 1);
+			linkService.createOrUpdateLink(link);
+		});
 	}
 }
