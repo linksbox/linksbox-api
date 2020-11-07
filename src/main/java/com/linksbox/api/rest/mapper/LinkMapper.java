@@ -20,6 +20,7 @@ public class LinkMapper {
 			result.setUrl(entity.getUrl());
 			result.setNotes(entity.getNotes());
 			result.setViews(entity.getViews());
+			result.setCreationDate(entity.getCreated());
 			result.setTags(
 					entity.getTags().stream().map(Tag -> tagMapper.mapToRestAPI(Tag)).collect(Collectors.toList()));
 		}
