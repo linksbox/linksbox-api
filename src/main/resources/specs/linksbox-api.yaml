@@ -199,6 +199,11 @@ paths:
         schema:
           type: integer
           default: 2    
+      - name: newSearch
+        in: query
+        required: true
+        schema:
+          type: boolean
     get:
       summary: Get link by given free text
       operationId: search
