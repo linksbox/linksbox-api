@@ -46,7 +46,7 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 	TagMapper tagMapper = new TagMapper();
 
 	@Override
-	public ResponseEntity<LinksData> search(String searchText, Integer page, Integer size) {
+	public ResponseEntity<LinksData> search(String searchText, Boolean newSearch, Integer page, Integer size) {
 
 		if (searchText == null || searchText.trim().isEmpty()) {
 			throw new RestApiValidationException(ErrorKey.SEARCH_TEXT, "Enter a free text to search link...");
@@ -61,7 +61,8 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 		result.setCurrentPage(linkPage.getNumber());
 		result.setTotalElements((int) linkPage.getTotalElements());
 		result.setTotalPages(linkPage.getTotalPages());
-		incrementViews(linkPage.getContent());
+		if (newSearch)
+			incrementViews(linkPage.getContent());
 
 		return ResponseEntity.ok().body(result);
 	}
@@ -168,7 +169,7 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 
 	private void incrementViews(List<Link> links) {
 		links.stream().forEach(link -> {
-			if(link.getViews() == null) {
+			if (link.getViews() == null) {
 				link.setViews(0);
 			}
 			link.setViews(link.getViews() + 1);
