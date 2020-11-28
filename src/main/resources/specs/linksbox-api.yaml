@@ -128,6 +128,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiErrorList"   
+    post:
+      summary: increment link views by given uuid
+      operationId: incrementLinkViews
+      tags:
+        - Links
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkData'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorList'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorList"   
                    
     put:
       summary: Update a link
