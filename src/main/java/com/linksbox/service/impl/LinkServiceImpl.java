@@ -10,12 +10,12 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.linksbox.model.Link;
 import com.linksbox.model.Tag;
@@ -69,18 +69,17 @@ public class LinkServiceImpl implements LinkService {
 				private static final long serialVersionUID = 1L;
 
 				@Override
-				public Predicate toPredicate(Root<Link> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				public Predicate toPredicate(Root<Link> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
 					List<Predicate> predicates = new ArrayList<>();
-
-					if (!StringUtils.isEmpty(searchText)) {
-
+					if (StringUtils.isNotBlank(searchText)) {
 						String text = "%" + searchText.toLowerCase() + "%";
-
-						Predicate searchTextPredicate = cb.or(cb.like(cb.lower(root.get("title")), text),
-								cb.like(cb.lower(root.get("url")), text), cb.like(cb.lower(root.get("notes")), text));
-						predicates.add(cb.and(searchTextPredicate));
+						Predicate searchTextPredicate = criteriaBuilder.or(
+								criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), text),
+								criteriaBuilder.like(criteriaBuilder.lower(root.get("url")), text),
+								criteriaBuilder.like(criteriaBuilder.lower(root.get("notes")), text));
+						predicates.add(criteriaBuilder.and(searchTextPredicate));
 					}
-					return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+					return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
 				}
 
 			};
