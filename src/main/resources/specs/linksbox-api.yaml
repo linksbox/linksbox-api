@@ -64,7 +64,7 @@ paths:
       parameters:
       - name: tagUuids
         in: query
-        required: true
+        required: false
         schema:
           type: array
           items:

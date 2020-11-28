@@ -64,5 +64,6 @@ public class Link extends AbstractBaseEntity {
 	@PrePersist
 	public void onPreInsert() {
 		setUuid(UUID.randomUUID());
+		setViews(0);
 	}
 }

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +15,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import com.linksbox.api.rest.mapper.LinkMapper;
 import com.linksbox.api.rest.mapper.TagMapper;
@@ -73,7 +73,7 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 		LinksData result = new LinksData();
 		List<LinkData> links = null;
 
-		if (!CollectionUtils.isEmpty(tagUuids)) {
+		if (CollectionUtils.isNotEmpty(tagUuids)) {
 			for (UUID uuid : tagUuids) {
 				links = tagService.getTagByUuid(uuid).get().getLinks().stream().map(link -> mapper.mapToRestAPI(link))
 						.collect(Collectors.toList());
@@ -103,10 +103,6 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 	@Override
 	public ResponseEntity<LinkData> createLink(List<UUID> tagUuids, LinkInput linkInput) {
 
-		if (CollectionUtils.isEmpty(tagUuids)) {
-			throw new RestApiValidationException("Tags are mondatory for the link creation!");
-		}
-
 		if (linkService.getLinkByUrl(linkInput.getUrl()).isPresent()) {
 			throw new RestApiValidationException(ErrorKey.LINK_URL, "Link URL already exist!");
 		}
@@ -116,7 +112,9 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 		LinkData response = new LinkData();
 		try {
 			Link link = mapper.mapToEntity(linkInput);
-			link.setTags(getTags(tagUuids));
+			if (CollectionUtils.isNotEmpty(tagUuids)) {
+				link.setTags(getTags(tagUuids));
+			}
 			linkService.createOrUpdateLink(link);
 			response = mapper.mapToRestAPI(link);
 		} catch (Exception e) {
