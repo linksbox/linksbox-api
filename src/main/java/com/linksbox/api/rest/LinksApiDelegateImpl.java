@@ -61,8 +61,6 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 		result.setCurrentPage(linkPage.getNumber());
 		result.setTotalElements((int) linkPage.getTotalElements());
 		result.setTotalPages(linkPage.getTotalPages());
-		if (newSearch)
-			incrementViews(linkPage.getContent());
 
 		return ResponseEntity.ok().body(result);
 	}
@@ -88,6 +86,24 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 			result.setTotalPages(linkPage.getTotalPages());
 		}
 		return ResponseEntity.ok().body(result);
+	}
+
+	@Override
+	public ResponseEntity<LinkData> incrementLinkViews(UUID uuid) {
+
+		Optional<Link> link = linkService.getLinkByUuid(uuid);
+		if (!link.isPresent()) {
+			throw new RestApiValidationException(ErrorKey.LINK_URL, "Link Not found");
+		}
+		Link gotLink = link.get();
+		try {
+			gotLink.setViews(gotLink.getViews() + 1);
+			linkService.createOrUpdateLink(gotLink);
+		} catch (Exception e) {
+			log.error("Exception in incrementing link views: {}", e);
+			throw new RestApiServerException(e.getMessage());
+		}
+		return ResponseEntity.ok().body(mapper.mapToRestAPI(gotLink));
 	}
 
 	@Override
@@ -165,13 +181,4 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 		return tagUuids.stream().map(uuid -> tagService.getTagByUuid(uuid).get()).collect(Collectors.toList());
 	}
 
-	private void incrementViews(List<Link> links) {
-		links.stream().forEach(link -> {
-			if (link.getViews() == null) {
-				link.setViews(0);
-			}
-			link.setViews(link.getViews() + 1);
-			linkService.createOrUpdateLink(link);
-		});
-	}
 }
