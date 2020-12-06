@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.linksbox.api.rest.mapper.LinkMapper;
-import com.linksbox.api.rest.mapper.TagMapper;
 import com.linksbox.api.rest.model.LinkData;
 import com.linksbox.api.rest.model.LinkInput;
 import com.linksbox.api.rest.model.LinksData;
@@ -42,9 +41,6 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 	@Autowired
 	private TagService tagService;
 
-	LinkMapper mapper = new LinkMapper();
-	TagMapper tagMapper = new TagMapper();
-
 	@Override
 	public ResponseEntity<LinksData> search(String searchText, Boolean newSearch, Integer page, Integer size) {
 
@@ -55,7 +51,7 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 		LinksData result = new LinksData();
 
 		Page<Link> linkPage = linkService.search(searchText, PageRequest.of(page, size, Sort.by("views").descending()));
-		List<LinkData> links = linkPage.getContent().stream().map(link -> mapper.mapToRestAPI(link))
+		List<LinkData> links = linkPage.getContent().stream().map(link -> LinkMapper.mapToRestAPI(link))
 				.collect(Collectors.toList());
 		result.setLinks(links);
 		result.setCurrentPage(linkPage.getNumber());
@@ -73,13 +69,14 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 
 		if (CollectionUtils.isNotEmpty(tagUuids)) {
 			for (UUID uuid : tagUuids) {
-				links = tagService.getTagByUuid(uuid).get().getLinks().stream().map(link -> mapper.mapToRestAPI(link))
-						.collect(Collectors.toList());
+				links = tagService.getTagByUuid(uuid).get().getLinks().stream()
+						.map(link -> LinkMapper.mapToRestAPI(link)).collect(Collectors.toList());
 				result.setLinks(links);
 			}
 		} else {
 			Page<Link> linkPage = linkService.getLinks(PageRequest.of(page, size, Sort.by("views").descending()));
-			links = linkPage.getContent().stream().map(link -> mapper.mapToRestAPI(link)).collect(Collectors.toList());
+			links = linkPage.getContent().stream().map(link -> LinkMapper.mapToRestAPI(link))
+					.collect(Collectors.toList());
 			result.setLinks(links);
 			result.setCurrentPage(linkPage.getNumber());
 			result.setTotalElements((int) linkPage.getTotalElements());
@@ -103,7 +100,7 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 			log.error("Exception in incrementing link views: {}", e);
 			throw new RestApiServerException(e.getMessage());
 		}
-		return ResponseEntity.ok().body(mapper.mapToRestAPI(gotLink));
+		return ResponseEntity.ok().body(LinkMapper.mapToRestAPI(gotLink));
 	}
 
 	@Override
@@ -113,7 +110,7 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 		if (!link.isPresent()) {
 			throw new RestApiValidationException(ErrorKey.LINK_URL, "Link Not found");
 		}
-		return ResponseEntity.ok().body(mapper.mapToRestAPI(link.get()));
+		return ResponseEntity.ok().body(LinkMapper.mapToRestAPI(link.get()));
 	}
 
 	@Override
@@ -127,12 +124,12 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 
 		LinkData response = new LinkData();
 		try {
-			Link link = mapper.mapToEntity(linkInput);
+			Link link = LinkMapper.mapToEntity(linkInput);
 			if (CollectionUtils.isNotEmpty(tagUuids)) {
 				link.setTags(getTags(tagUuids));
 			}
 			linkService.createOrUpdateLink(link);
-			response = mapper.mapToRestAPI(link);
+			response = LinkMapper.mapToRestAPI(link);
 		} catch (Exception e) {
 			log.error("Exception in link creation: {}", e);
 			throw new RestApiServerException(e.getMessage());
@@ -141,17 +138,19 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 	}
 
 	@Override
-	public ResponseEntity<LinkData> updateLink(UUID uuid, LinkInput linkInput) {
+	public ResponseEntity<LinkData> updateLink(LinkData linkData) {
 
-		Optional<Link> link = linkService.getLinkByUuid(uuid);
+		Optional<Link> link = linkService.getLinkByUuid(linkData.getUuid());
 		if (!link.isPresent()) {
 			throw new RestApiValidationException(ErrorKey.LINK_URL, "Link Not found");
 		}
 		LinkData response = new LinkData();
 		try {
-			Link linkUp = mapper.patch(linkInput, link.get());
-			linkService.createOrUpdateLink(linkUp);
-			response = mapper.mapToRestAPI(linkUp);
+			Link gotLink = link.get();
+			LinkMapper.patch(linkData, gotLink);
+			mapTags(linkData, gotLink);
+			linkService.createOrUpdateLink(gotLink);
+			response = LinkMapper.mapToRestAPI(gotLink);
 		} catch (Exception e) {
 			log.error("Exception in link updating: {}", e);
 			throw new RestApiServerException(e.getMessage());
@@ -179,6 +178,12 @@ public class LinksApiDelegateImpl implements LinksApiDelegate {
 
 	private List<Tag> getTags(List<UUID> tagUuids) {
 		return tagUuids.stream().map(uuid -> tagService.getTagByUuid(uuid).get()).collect(Collectors.toList());
+	}
+
+	private void mapTags(LinkData linkData, Link gotLink) {
+		List<Tag> tags = linkData.getTags().stream().map(tag -> tagService.getTagByUuid(tag.getUuid()).get())
+				.collect(Collectors.toList());
+		gotLink.setTags(tags);
 	}
 
 }

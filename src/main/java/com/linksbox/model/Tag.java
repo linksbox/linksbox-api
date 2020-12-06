@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -43,7 +44,7 @@ public class Tag extends AbstractBaseEntity {
 	@Column(name = "NAME")
 	private String name;
 
-	@ManyToMany(mappedBy = "tags")
+	@ManyToMany(mappedBy = "tags", cascade = CascadeType.ALL)
 	private List<Link> links = new ArrayList<>();
 	
 	@PrePersist

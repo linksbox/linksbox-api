@@ -10,7 +10,7 @@ public class LinkMapper {
 
 	TagMapper tagMapper = new TagMapper();
 
-	public LinkData mapToRestAPI(Link entity) {
+	public static LinkData mapToRestAPI(Link entity) {
 
 		LinkData result = null;
 		if (entity != null) {
@@ -22,12 +22,12 @@ public class LinkMapper {
 			result.setViews(entity.getViews());
 			result.setCreationDate(entity.getCreated());
 			result.setTags(
-					entity.getTags().stream().map(Tag -> tagMapper.mapToRestAPI(Tag)).collect(Collectors.toList()));
+					entity.getTags().stream().map(Tag -> TagMapper.mapToRestAPI(Tag)).collect(Collectors.toList()));
 		}
 		return result;
 	}
 
-	public Link mapToEntity(LinkInput input) {
+	public static Link mapToEntity(LinkInput input) {
 
 		Link result = null;
 		if (input != null) {
@@ -40,15 +40,12 @@ public class LinkMapper {
 		return result;
 	}
 
-	public Link patch(LinkInput input, Link to) {
+	public static void patch(LinkData linkData, Link to) {
 
-		Link result = to;
-		if (input != null) {
-			result.setTitle(input.getTitle());
-			result.setUrl(input.getUrl());
-			result.setNotes(input.getNotes());
-			result.setViews(input.getViews());
+		if (linkData != null) {
+			to.setTitle(linkData.getTitle());
+			to.setUrl(linkData.getUrl());
+			to.setNotes(linkData.getNotes());
 		}
-		return result;
 	}
 }
