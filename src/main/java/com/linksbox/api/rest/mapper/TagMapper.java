@@ -6,7 +6,7 @@ import com.linksbox.model.Tag;
 
 public class TagMapper {
 
-	public TagData mapToRestAPI(Tag entity) {
+	public static TagData mapToRestAPI(Tag entity) {
 
 		TagData result = null;
 		if (entity != null) {
@@ -17,7 +17,7 @@ public class TagMapper {
 		return result;
 	}
 
-	public Tag mapToEntity(TagInput input) {
+	public static Tag mapToEntity(TagInput input) {
 
 		Tag result = null;
 		if (input != null) {
@@ -27,12 +27,10 @@ public class TagMapper {
 		return result;
 	}
 
-	public Tag patch(TagInput input, Tag to) {
+	public static void patch(TagInput input, Tag to) {
 
-		Tag result = to;
 		if (input != null) {
-			result.setName(input.getName());
+			to.setName(input.getName());
 		}
-		return result;
 	}
 }

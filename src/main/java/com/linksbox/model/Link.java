@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -54,7 +55,7 @@ public class Link extends AbstractBaseEntity {
 	@Column(name = "VIEWS")
 	private Integer views;
 	
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(
 	  name = "LINK_TAG",
 	  joinColumns = @JoinColumn(name = "LINK_ID"),

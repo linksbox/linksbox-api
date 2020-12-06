@@ -31,11 +31,9 @@ public class TagsApiDelegateImpl implements TagsApiDelegate {
 	@Autowired
 	private TagService tagService;
 
-	TagMapper mapper = new TagMapper();
-
 	@Override
 	public ResponseEntity<List<TagData>> getTags() {
-		List<TagData> tags = tagService.getTags().stream().map(Tag -> mapper.mapToRestAPI(Tag))
+		List<TagData> tags = tagService.getTags().stream().map(Tag -> TagMapper.mapToRestAPI(Tag))
 				.collect(Collectors.toList());
 		return ResponseEntity.ok().body(tags);
 	}
@@ -46,12 +44,12 @@ public class TagsApiDelegateImpl implements TagsApiDelegate {
 		if (!tag.isPresent()) {
 			throw new RestApiValidationException("Tag Not found");
 		}
-		return ResponseEntity.ok().body(mapper.mapToRestAPI(tag.get()));
+		return ResponseEntity.ok().body(TagMapper.mapToRestAPI(tag.get()));
 	}
 
 	@Override
 	public ResponseEntity<TagData> createTag(TagInput tagInput) {
-		
+
 		if (tagService.getTagByName(tagInput.getName()).isPresent()) {
 			throw new RestApiValidationException(ErrorKey.TAG_NAME, "Tag already exist!");
 		}
@@ -59,9 +57,9 @@ public class TagsApiDelegateImpl implements TagsApiDelegate {
 		log.info("> createTag...");
 		TagData response = new TagData();
 		try {
-			Tag tag = mapper.mapToEntity(tagInput);
+			Tag tag = TagMapper.mapToEntity(tagInput);
 			tagService.createOrUpdateTag(tag);
-			response = mapper.mapToRestAPI(tag);
+			response = TagMapper.mapToRestAPI(tag);
 		} catch (Exception e) {
 			log.error("Exception in Tag creation: {}", e);
 			throw new RestApiServerException(e.getMessage());
@@ -77,9 +75,10 @@ public class TagsApiDelegateImpl implements TagsApiDelegate {
 		}
 		TagData response = new TagData();
 		try {
-			Tag tagUp = mapper.patch(tagInput, tag.get());
-			tagService.createOrUpdateTag(tagUp);
-			response = mapper.mapToRestAPI(tagUp);
+			Tag gotTag = tag.get();
+			TagMapper.patch(tagInput, gotTag);
+			tagService.createOrUpdateTag(gotTag);
+			response = TagMapper.mapToRestAPI(gotTag);
 		} catch (Exception e) {
 			log.error("Exception in Tag creation: {}", e);
 			throw new RestApiServerException(e.getMessage());
