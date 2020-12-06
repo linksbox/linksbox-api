@@ -93,7 +93,37 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiErrorList"   
+                $ref: "#/components/schemas/ApiErrorList" 
+
+    put:
+      summary: Update a link
+      operationId: updateLink
+      tags:
+        - Links
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkData'  
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkData'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorList'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorList"                     
                 
   /links/{uuid}:
     parameters:
@@ -153,36 +183,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiErrorList"   
                    
-    put:
-      summary: Update a link
-      operationId: updateLink
-      tags:
-        - Links
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LinkInput'  
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LinkData'
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiErrorList'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ApiErrorList"   
-                      
     delete:
       summary: Delete link by given uuid
       operationId: deleteLink
